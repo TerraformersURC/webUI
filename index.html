@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" type="text/css" href="index.css">
+  <script type="text/javascript"
+    src="https://cdn.jsdelivr.net/npm/eventemitter2@6.4.9/lib/eventemitter2.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.js"></script>
+</head>
+
+<body>
+  <div class="header">
+    <h1 class="text">Terraformers Web UI</h1>
+  </div>
+  <div class="topics">
+    <p class="text">Active Topics:&nbsp </p>
+    <p id="topicList" class="text"></p>
+  </div>
+  <div class="logs">
+    
+  </div>
+  <div class="webTopicPub">
+    <p>Publish to /webTopic</p>
+    <textarea id="msg" class="textbox" placeholder="message text here"></textarea>
+    <button onclick="publish('/webTopic', 'std_msgs/String', new ROSLIB.Message({data: document.getElementById('msg').value}));">Publish</button>
+    <p> What You Published: </p>
+    <div class="publishedContent"></div>
+  </div>
+
+    <div class="imuSub">
+    <p> IMU Sub: </p>
+    <div class="imuSubContent"></div>
+  </div>
+</body>
+
+</html>
+<script src="ros.js"></script>

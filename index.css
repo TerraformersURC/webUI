@@ -1,0 +1,51 @@
+body {
+    background: #0f172a;
+    font-family: monospace;
+}
+
+.text {
+    color: ghostwhite;
+}
+
+.header {
+    width: 100vw;
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.topics {
+    display: flex;
+    flex-direction: row;
+}
+
+.webTopicPub {
+    width: 30vw;
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: gray;
+}
+
+.textbox {
+    width: 20vw;
+    height: 5vh;
+}
+
+.publishedContent {
+    display: flex;
+    justify-content: left;
+    padding-left: 10px;
+    width: 100%;
+}
+
+.logs {
+    width: 60vw;
+    height: 40vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: gray;
+}
