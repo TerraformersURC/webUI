@@ -66,6 +66,7 @@ async function subscribe() {
 
 }
 
+var buttons = [];
 function listTopics() {
     var topics = null;
     var getTopicsClient = new ROSLIB.Service({
@@ -77,24 +78,23 @@ function listTopics() {
     var request = new ROSLIB.ServiceRequest({
     });
 
+    for (let btn of buttons) btn.remove();
+    buttons = [];
     getTopicsClient.callService(request, function (result) {
         var topics = "";
         console.log('Topics:', result.topics);
-        var buttons = [];
         for (topic of result.topics) {
-            for (var i = 0; i < buttons.length; i++){
-               document.getElementsByClassName("logs")[0].removeChild(buttons.pop());                 
-            }
             console.log(topic);
-            topics += topic + ", "
+            topics += topic + ", ";
             const button = document.createElement("button");
+            button.textContent = topic;
             buttons.push(button);
             document.getElementsByClassName("logs")[0].appendChild(button);
-            button.textContent = topic;
         }
         topics = topics.substring(0, topics.length - 2);
         document.getElementById("topicList").textContent = topics;
     });
+    console.log(buttons);
 
 }
 
@@ -126,8 +126,10 @@ async function updateTopics() {
 function run() {
     connect();
     updateTopics();
+    // listTopics();
     subscribe();
     console.log((new Date()).toLocaleString());
+    // listTopics();
 }
 run();
 // publish();
