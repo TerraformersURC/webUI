@@ -4,9 +4,19 @@
 <head>
   <meta charset="utf-8" />
   <link rel="stylesheet" type="text/css" href="index.css">
+
+  <!-- roslib -->
   <script type="text/javascript"
-    src="https://cdn.jsdelivr.net/npm/eventemitter2@6.4.9/lib/eventemitter2.min.js"></script>
+    src="https://cdn.jsdelivr.net/npm/eventemitter2@6.4.9/lib/eventemitter2.min.js"></script> 
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.js"></script>
+
+  <!-- Leaflet -->
+   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
 </head>
 
 <body>
@@ -17,15 +27,29 @@
     <p class="text">Active Topics:&nbsp </p>
     <p id="topicList" class="text"></p>
   </div>
-  <div class="logs">
 
-  </div>
-  <div class="webTopicPub">
-    <p>Publish to /webTopic</p>
-    <textarea id="msg" class="textbox" placeholder="message text here"></textarea>
-    <button onclick="publish('/webTopic', 'std_msgs/String', new ROSLIB.Message({data: document.getElementById('msg').value}));">Publish</button>
-    <p> What You Published: </p>
-    <div class="publishedContent"></div>
+  <div class="container">
+
+    <div class="logs">
+      <div class="btns">
+        
+      </div>
+      <p id="topicDisplay" class="text">Selected Topic: N/A</p>
+      <textarea id="log"  readonly class="logbox">
+        
+      </textarea>
+    </div>
+    <!-- <div class="webTopicPub">
+      <p>Publish to /webTopic</p>
+      <textarea id="msg" class="textbox" placeholder="message text here"></textarea>
+      <button onclick="publish('/webTopic', 'std_msgs/String', new ROSLIB.Message({data: document.getElementById('msg').value}));">Publish</button>
+      <p> What You Published: </p>
+      <div class="publishedContent"></div>
+    </div> -->
+    <div class="container2">
+      <div id="map" style="height: 50vh; width: 50vw;"></div>
+      <img src="http://localhost:8080/stream?topic=/robot/rgb_camera/image_raw" alt="http://localhost:8080/stream?topic=/robot/rgb_camera/image_raw" style="height:40vh; width:50vw;">
+    </div>
   </div>
 </body>
 
