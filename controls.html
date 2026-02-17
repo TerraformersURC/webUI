@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" type="text/css" href="controls.css">
+
+  <!-- roslib -->
+  <script type="text/javascript"
+    src="https://cdn.jsdelivr.net/npm/eventemitter2@6.4.9/lib/eventemitter2.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.js"></script>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+
+<body>
+  <div class="header">
+    <h1 class="text headerText">Terraformers Web UI</h1>
+    <div class="battery">
+      <div class="batteryBorder">
+        <div class="batteryBox">
+          <h3 class="batteryPercent">NAN%</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="toggles">
+      <h3 class="text">TOGGLES</h3>
+      <div class="toggleGrid">
+        <button>TOGGLE1</button>
+        <button>TOGGLE2</button>
+        <button>TOGGLE3</button>
+        <button>TOGGLE4</button>
+        <button>TOGGLE5</button>
+        <button>TOGGLE6</button>
+      </div>
+    </div>
+
+    <div class="drivetrain">
+      <h3 class="text">DRIVETRAIN</h3>
+      <div class="drivetrainGrid">
+        <button>-</button>
+        <button>FWD</button>
+        <button>-</button>
+        <button>LEFT</button>
+        <button>REV</button>
+        <button>RIGHT</button>
+        <button>-</button>
+        <button>-</button>
+        <button>-</button>
+      </div>
+    </div>
+
+    <div class="arm">
+      <div class="armTitle">
+        <h3 class="text">ARM &nbsp</h3>
+        <h3 class="text" style="color:red;">X &nbsp</h3>
+        <h3 class="text" style="color:lime;">Y &nbsp</h3>
+        <h3 class="text" style="color:cyan;">Z</h3>
+      </div>
+      <div class="armGrid">
+
+        <div class="armGridSub1">
+          <button>-</button>
+          <button style="background-color: lime;">UP</button>
+          <button>-</button>
+          <button style="background-color: red;">LEFT</button>
+          <button>GRAB</button>
+          <button style="background-color: red;">RIGHT</button>
+          <button>-</button>
+          <button style="background-color: lime;">DOWN</button>
+          <button>-</button>
+
+        </div>
+        <div class="armGridSub2">
+          <button style="background-color: cyan;">FWD</button>
+          <button style="background-color:cyan;">REV</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
+<!-- <script src="ros.js"></script> -->
+ <script src="general.js"></script>

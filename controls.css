@@ -1,0 +1,81 @@
+body {
+    background: #0f172a;
+    font-family: monospace;
+    overflow: hidden;
+}
+
+.text {
+    color: ghostwhite;
+}
+
+.header {
+    width: 96vw;
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.battery{
+    position: absolute;
+    right:0;
+}
+
+.headerText{
+    margin: 0 auto;
+}
+
+.toggleGrid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    height: 40vh;
+    width: 25vw;
+}
+button{
+    font-size: xx-large;
+}
+
+.drivetrainGrid, .armGridSub1{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    height:40vh;
+    width: 25vw;
+}
+
+.controls{
+    display: flex;
+    justify-content: space-evenly;
+}
+.armGridSub2{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    height:40vh;
+    width: 8vw;
+}
+.armGrid{
+    display: flex;
+}
+h3{
+    font-size: xx-large;
+}
+.armTitle{
+    display: flex;
+}
+
+.batteryBox{
+    display: flex;
+    height:5vh;
+    width: 10vw;
+    background-color: lime;
+    text-align: center;
+    justify-content: center;
+}
+
+.batteryBorder{
+    height:5vh;
+    width: 10vw;
+    border: 2px solid lightgray;
+}

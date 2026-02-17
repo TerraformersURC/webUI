@@ -302,7 +302,7 @@ function topicClick(topic) {
 async function updateTopics() {
     while (true) {
         listTopics();
-        await sleep(2000);
+        await sleep(5000);
     }
 }
 var map;
