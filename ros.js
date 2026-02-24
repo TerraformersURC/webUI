@@ -1,3 +1,4 @@
+import { setIMU } from "./globalVariables.js";
 var ros = null;
 var topicToDisplay = "";
 
@@ -112,18 +113,23 @@ async function subscribe() {
         console.log("IMAGE LOAD");
         document.getElementById('my_image').src = "data:image/jpeg;base64," + message.data;
     });
+    var logBox;
     imuAngleSub.subscribe(function (message) {
+        const imuChannel = new BroadcastChannel('imu');
+        setIMU(message.x, message.y, message.z);
+        imuChannel.postMessage({x: message.x, y: message.y, z: message.z });
         if (topicToDisplay == "IMUAngle") {
+
             logBox = document.getElementById('log');
             if (logBox.value.length > 6500) {
                 logBox.value = "";
             }
             logBox.value += (new Date()).toLocaleString() + ' Status: ' + message.status + ' X: ' + message.x + ' Y: ' + message.y + ' Z: ' + message.z + "\n";
-
         }
     });
 
     imuAccelerationSub.subscribe(function (message) {
+        // const logBox = document.getElementById('log');
         if (topicToDisplay == "IMUAcceleration") {
             logBox = document.getElementById('log');
             if (logBox.value.length > 6500) {
@@ -135,6 +141,7 @@ async function subscribe() {
     });
 
     imuGyroSub.subscribe(function (message) {
+        // const logBox = document.getElementById('log');
         if (topicToDisplay == "IMUGyro") {
             logBox = document.getElementById('log');
             if (logBox.value.length > 6500) {
@@ -145,6 +152,7 @@ async function subscribe() {
         }
     });
     imuMagnetSub.subscribe(function (message) {
+        // const logBox = document.getElementById('log');
         if (topicToDisplay == "IMUMagnet") {
             logBox = document.getElementById('log');
             if (logBox.value.length > 6500) {
@@ -166,6 +174,7 @@ async function subscribe() {
     });
 
     rosOutSub.subscribe(function (message) {
+        // const logBox = document.getElementById('log');
         if (topicToDisplay == "rosout") {
             logBox = document.getElementById('log');
             if (logBox.value.length > 6500) {
@@ -176,6 +185,7 @@ async function subscribe() {
     });
 
     gps_topic.subscribe(function (message) {
+        // const logBox = document.getElementById('log');
         lat = message.latitude;
         long = message.longitude;
         if (topicToDisplay == "GPSData") {
@@ -183,7 +193,7 @@ async function subscribe() {
             if (logBox.value.length > 6500) {
                 logBox.value = "";
             }
-            logBox.value += (new Date()).toLocaleString() + ' Status: ' + message.status + ' Latitude: ' +  message.latitude + ' Longitude: ' + message.longitude + ' Altitude: ' + message.altitude + ' Fix Quality: ' + message.fix_quality + ' Num Satellites: ' + message.num_satellites +  ' hdop: ' + message.hdop + ' GeoID Separation: ' + message.geoid_separation + '\n';
+            logBox.value += (new Date()).toLocaleString() + ' Status: ' + message.status + ' Latitude: ' + message.latitude + ' Longitude: ' + message.longitude + ' Altitude: ' + message.altitude + ' Fix Quality: ' + message.fix_quality + ' Num Satellites: ' + message.num_satellites + ' hdop: ' + message.hdop + ' GeoID Separation: ' + message.geoid_separation + '\n';
         }
     });
 
@@ -208,7 +218,7 @@ function listTopics() {
         // console.log('Topics:', result.topics);
         for (let topic of result.topics) {
             topics += topic + ", ";
-            if (topic == "/GPSData" || topic == "/IMUAcceleration" || topic == "/IMUAngle" || topic == "/IMUGyro" || topic == "/IMUMagnet" || topic == "/IMUQuaternion" || topic == "/rosout"){
+            if (topic == "/GPSData" || topic == "/IMUAcceleration" || topic == "/IMUAngle" || topic == "/IMUGyro" || topic == "/IMUMagnet" || topic == "/IMUQuaternion" || topic == "/rosout") {
 
                 const button = document.createElement("button");
                 button.onclick = () => topicClick(topic);

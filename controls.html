@@ -15,10 +15,21 @@
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Three.js-->
+         <script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.183.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.183.1/examples/jsm/"
+  }
+}
+</script>
 </head>
 
 <body>
   <div class="header">
+    <a href="./index.html" target="_blank" class="text" style="font-size: xx-large;">Home</a>
     <h1 class="text headerText">Terraformers Web UI</h1>
     <div class="battery">
       <div class="batteryBorder">
@@ -85,8 +96,17 @@
       </div>
     </div>
   </div>
+  <div class="bottom">
+    <div class="sim">
+    </div>
+    <div class="aruco">
+
+    </div>
+  </div>
 </body>
 
 </html>
 <!-- <script src="ros.js"></script> -->
+     <script type="module" src="./sim.js"></script>
+
  <script src="general.js"></script>
