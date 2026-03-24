@@ -4,6 +4,8 @@ var topicToDisplay = "";
 
 var lat = -1;
 var long = -1;
+var mouseLat = -1;
+var mouseLong = -1;
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -26,22 +28,25 @@ function connect() {
     });
 }
 
-function publish(topic, messageType, message) {
-    // var topic = new ROSLIB.Topic({
-    //     ros: ros,
-    //     name: '/webTopic',
-    //     messageType: 'std_msgs/String'
-    // });
-
-    // var msg = new ROSLIB.Message({
-    //     data: 'test message'
-    // });
+function publishWaypoint(name, color, latitude, longitude) {
     var topic = new ROSLIB.Topic({
         ros: ros,
-        name: topic,
-        messageType: messageType
+        name: '/waypoints',
+        messageType: 'rover_interface/msg/WaypointData'
     });
-    topic.publish(message);
+
+    var msg = new ROSLIB.Message({
+        waypoint_name: name,
+        waypoint_color: color,
+        latitude: latitude,
+        longitude: longitude
+    });
+    // var topic = new ROSLIB.Topic({
+    //     ros: ros,
+    //     name: topic,
+    //     messageType: messageType
+    // });
+    topic.publish(msg);
     // console.log('Message published');
 }
 
@@ -55,29 +60,29 @@ async function subscribe() {
     var imuAngleSub = new ROSLIB.Topic({
         ros: ros,
         name: '/IMUAngle',
-        messageType: 'imu_msgs/msg/IMUData'
+        messageType: 'rover_interface/msg/IMUData'
     });
 
     var imuAccelerationSub = new ROSLIB.Topic({
         ros: ros,
         name: '/IMUAcceleration',
-        messageType: 'imu_msgs/msg/IMUData'
+        messageType: 'rover_interface/msg/IMUData'
     });
     var imuGyroSub = new ROSLIB.Topic({
         ros: ros,
         name: '/IMUGyro',
-        messageType: 'imu_msgs/msg/IMUData'
+        messageType: 'rover_interface/msg/IMUData'
     });
     var imuMagnetSub = new ROSLIB.Topic({
         ros: ros,
         name: '/IMUMagnet',
-        messageType: 'imu_msgs/msg/IMUData'
+        messageType: 'rover_interface/msg/IMUData'
     });
-    var imuQuaternionSub = new ROSLIB.Topic({
-        ros: ros,
-        name: '/IMUQuaternion',
-        messageType: 'imu_msgs/msg/IMUQuaternionData'
-    });
+    // var imuQuaternionSub = new ROSLIB.Topic({
+    //     ros: ros,
+    //     name: '/IMUQuaternion',
+    //     messageType: 'imu_msgs/msg/IMUQuaternionData'
+    // });
 
     var rosOutSub = new ROSLIB.Topic({
         ros: ros,
@@ -95,7 +100,7 @@ async function subscribe() {
     var gps_topic = new ROSLIB.Topic({
         ros: ros,
         name: '/GPSData',
-        messageType: 'gps_msgs/GPSData'
+        messageType: 'rover_interface/msg/GPSData'
     })
 
 
@@ -117,7 +122,7 @@ async function subscribe() {
     imuAngleSub.subscribe(function (message) {
         const imuChannel = new BroadcastChannel('imu');
         setIMU(message.x, message.y, message.z);
-        imuChannel.postMessage({x: message.x, y: message.y, z: message.z });
+        imuChannel.postMessage({ x: message.x, y: message.y, z: message.z });
         if (topicToDisplay == "IMUAngle") {
 
             logBox = document.getElementById('log');
@@ -162,16 +167,16 @@ async function subscribe() {
 
         }
     });
-    imuQuaternionSub.subscribe(function (message) {
-        if (topicToDisplay == "IMUQuaternion") {
-            logBox = document.getElementById('log');
-            if (logBox.value.length > 6500) {
-                logBox.value = "";
-            }
-            logBox.value += (new Date()).toLocaleString() + ' Status: ' + message.status + ' W' + message.w + ' X: ' + message.x + ' Y: ' + message.y + ' Z: ' + message.z + "\n";
+    // imuQuaternionSub.subscribe(function (message) {
+    //     if (topicToDisplay == "IMUQuaternion") {
+    //         logBox = document.getElementById('log');
+    //         if (logBox.value.length > 6500) {
+    //             logBox.value = "";
+    //         }
+    //         logBox.value += (new Date()).toLocaleString() + ' Status: ' + message.status + ' W' + message.w + ' X: ' + message.x + ' Y: ' + message.y + ' Z: ' + message.z + "\n";
 
-        }
-    });
+    //     }
+    // });
 
     rosOutSub.subscribe(function (message) {
         // const logBox = document.getElementById('log');
@@ -291,11 +296,11 @@ function topicClick(topic) {
             console.log("BUTTON");
             topicDisplay.textContent = "Selected Topic: IMUMagnet";
             break;
-        case "/IMUQuaternion":
-            topicToDisplay = "IMUQuaternion";
-            console.log("BUTTON");
-            topicDisplay.textContent = "Selected Topic: IMUQuaternion";
-            break;
+        // case "/IMUQuaternion":
+        //     topicToDisplay = "IMUQuaternion";
+        //     console.log("BUTTON");
+        //     topicDisplay.textContent = "Selected Topic: IMUQuaternion";
+        //     break;
         case "/rosout":
             topicToDisplay = "rosout";
             console.log("BUTTON");
@@ -317,6 +322,41 @@ async function updateTopics() {
 }
 var map;
 var circle;
+var waypoints = [];
+var waypointNames = [];
+var waypointColors = [];
+var waitForName = false;
+async function addWaypointName() {
+    waitForName = true;
+    document.getElementsByClassName("popup")[0].style.display = "flex";
+    while (waitForName) {
+        await sleep(100);
+    }
+}
+function addName() {
+    waypointNames.push(document.getElementsByClassName("waypointName")[0].value);
+    waypointColors.push(document.getElementsByClassName("waypointColor")[0].value);
+    console.log(waypointNames.at(waypointNames.length - 1));
+    console.log(waypointColors.at(waypointColors.length - 1));
+    var waypoint = L.circle([mouseLat, mouseLong], {
+        color: waypointColors.at(waypointColors.length - 1),
+        fillColor: waypointColors.at(waypointColors.length - 1),
+        fillOpacity: 0.5,
+        radius: 2
+    });
+    waypoint.addTo(map);
+    waypoints.push(waypoint);
+    publishWaypoint(waypointNames.at(waypointNames.length - 1), waypointColors.at(waypointNames.length-1), mouseLat, mouseLong);
+    waypoints.at(waypoints.length - 1).bindTooltip(waypointNames.at(waypoints.length - 1), {
+        permanent: true,     // always visible
+        direction: "right",  // position relative to marker
+        offset: [10, 0]
+    });
+    waypoints.at(waypoints.length - 1).addTo(map);
+    document.getElementsByClassName("popup")[0].style.display = "none";
+    waitForName = false;
+}
+document.getElementById("nameBtn").addEventListener("click", addName);
 // var lat = 38.9903971;
 // var long = -76.9378520;
 function initGPS() {
@@ -327,6 +367,30 @@ function initGPS() {
         radius: 2
     });
     map = L.map('map').setView([lat, long], 50);
+    map.on('click', function (e) {
+        mouseLat = e.latlng.lat;
+        mouseLong = e.latlng.lng;
+        console.log(e.latlng.lat, e.latlng.lng);
+        addWaypointName();
+        // var waypoint = L.circle([mouseLat, mouseLong], {
+        //     color: 'blue',
+        //     fillColor: '#00f',
+        //     fillOpacity: 0.5,
+        //     radius: 2
+        // });
+
+        // waypoint.fillColor = "#000000";
+        // waypoint.color = "#000000";
+        // addWaypointName();
+        // waypoints.push(waypoint);
+        // waypoint.bindTooltip(waypointNames.at(waypoints.length-1), {
+        //     permanent: true,     // always visible
+        //     direction: "right",  // position relative to marker
+        //     offset: [10, 0]
+        // });
+        // waypoint.addTo(map);
+
+    });
     // L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     //     maxZoom: 50,
     //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -349,7 +413,11 @@ async function testMovement() {
     while (true) {
         // lat += 0.00001;
         // long += 0.00001;
+        // if (mouseLat != -1 || mouseLong != -1){
+        //     waypoints.push
+        // }
         var newLatLng = L.latLng(lat, long);
+        console.log("lat: " + lat + " long: " + long);
         circle.setLatLng(newLatLng);
         await sleep(100);
     }
