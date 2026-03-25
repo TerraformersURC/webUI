@@ -6,6 +6,7 @@ var lat = -1;
 var long = -1;
 var mouseLat = -1;
 var mouseLong = -1;
+var waypointMessages = []
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -28,6 +29,19 @@ function connect() {
     });
 }
 
+function publishWaypointList(){
+    var topic = new ROSLIB.Topic({
+        ros: ros,
+        name: '/waypoint_list',
+        messageType: 'rover_interface/msg/WaypointList'
+    });
+
+    var msg = new ROSLIB.Message({
+        list_waypoints: waypointMessages
+    });   
+    topic.publish(msg);
+}
+
 function publishWaypoint(name, color, latitude, longitude) {
     var topic = new ROSLIB.Topic({
         ros: ros,
@@ -41,6 +55,8 @@ function publishWaypoint(name, color, latitude, longitude) {
         latitude: latitude,
         longitude: longitude
     });
+    waypointMessages.push(msg);
+    publishWaypointList();
     // var topic = new ROSLIB.Topic({
     //     ros: ros,
     //     name: topic,
@@ -102,8 +118,17 @@ async function subscribe() {
         name: '/GPSData',
         messageType: 'rover_interface/msg/GPSData'
     })
+    var waypoint_topic = new ROSLIB.Topic({
+        ros: ros,
+        name: '/waypoints',
+        messageType: 'rover_interface/msg/WaypointData'
+    })
 
-
+    var waypoint_list_topic = new ROSLIB.Topic({
+        ros: ros,
+        name: '/waypoint_list',
+        messageType: 'rover_interface/msg/WaypointList'
+    })
     // listener.subscribe(function (message) {
     //     // console.log('Received message on ' + listener.name + ': ' + message.data);
     //     const messageP = document.createElement("p");
@@ -202,6 +227,33 @@ async function subscribe() {
         }
     });
 
+    waypoint_topic.subscribe(function (message) {
+        // const logBox = document.getElementById('log');
+        if (topicToDisplay == "waypoints") {
+            logBox = document.getElementById('log');
+            if (logBox.value.length > 6500) {
+                logBox.value = "";
+            }
+            logBox.value += (new Date()).toLocaleString() + ' Name: ' + message.waypoint_name + ' Color: ' + message.waypoint_color + ' Latitude: ' + message.latitude + ' Longitude: ' + message.longitude + '\n';
+        }
+    });
+
+    waypoint_list_topic.subscribe(function (message) {
+        // const logBox = document.getElementById('log');
+        if (topicToDisplay == "waypoint_list") {
+            logBox = document.getElementById('log');
+            if (logBox.value.length > 6500) {
+                logBox.value = "";
+            }
+            console.log("LENGTH LENGTH: " + message.list_waypoints.length)
+            for (var i = 0; i < message.list_waypoints.length; i++){
+                logBox.value += 'Waypoint ' + (i+1) + "\n";
+                logBox.value += (new Date()).toLocaleString() + ' Name: ' + message.list_waypoints[i].waypoint_name + ' Color: ' + message.list_waypoints[i].waypoint_color + ' Latitude: ' + message.list_waypoints[i].latitude + ' Longitude: ' + message.list_waypoints[i].longitude + '\n';
+            }
+            logBox.value += "\n";
+            // logBox.value += (new Date()).toLocaleString() + ' Waypoint: ' + message.list_waypoints[0].waypoint_name + '\n';
+        }
+    });
 }
 
 var buttons = [];
@@ -223,7 +275,7 @@ function listTopics() {
         // console.log('Topics:', result.topics);
         for (let topic of result.topics) {
             topics += topic + ", ";
-            if (topic == "/GPSData" || topic == "/IMUAcceleration" || topic == "/IMUAngle" || topic == "/IMUGyro" || topic == "/IMUMagnet" || topic == "/IMUQuaternion" || topic == "/rosout") {
+            if (topic == "/GPSData" || topic == "/IMUAcceleration" || topic == "/IMUAngle" || topic == "/IMUGyro" || topic == "/IMUMagnet" || topic == "/IMUQuaternion" || topic == "/rosout" || topic == "/waypoints" || topic == "/waypoint_list") {
 
                 const button = document.createElement("button");
                 button.onclick = () => topicClick(topic);
@@ -311,6 +363,16 @@ function topicClick(topic) {
             console.log("BUTTON");
             topicDisplay.textContent = "Selected Topic: GPSData";
             break;
+        case "/waypoints":
+            topicToDisplay = "waypoints";
+            console.log("BUTTON");
+            topicDisplay.textContent = "Selected Topic: waypoints";
+            break;
+        case "/waypoint_list":
+            topicToDisplay = "waypoint_list";
+            console.log("BUTTON");
+            topicDisplay.textContent = "Selected Topic: waypoint_list";
+            break;
     }
 }
 
@@ -397,6 +459,7 @@ function initGPS() {
     // }).addTo(map);
     var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+
     })
     Esri_WorldImagery.addTo(map);
     circle.addTo(map);
