@@ -99,4 +99,7 @@ h3 {
     height: 50vh;
     width: 45vw;
     background-color: black;
+    display:flex;
+    align-items: center;
+    justify-content: center;
 }
