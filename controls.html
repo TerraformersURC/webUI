@@ -44,12 +44,12 @@
     <div class="toggles">
       <h3 class="text">TOGGLES</h3>
       <div class="toggleGrid">
-        <button>TOGGLE1</button>
-        <button>TOGGLE2</button>
-        <button>TOGGLE3</button>
-        <button>TOGGLE4</button>
-        <button>TOGGLE5</button>
-        <button>TOGGLE6</button>
+        <button onclick="setControl(0);">TOGGLE1</button>
+        <button onclick="setControl(1);">TOGGLE2</button>
+        <button onclick="setControl(2);">TOGGLE3</button>
+        <button onclick="setControl(3);">TOGGLE4</button>
+        <button onclick="setControl(4);">TOGGLE5</button>
+        <button onclick="setControl(5);">TOGGLE6</button>
       </div>
     </div>
 
@@ -57,11 +57,11 @@
       <h3 class="text">DRIVETRAIN</h3>
       <div class="drivetrainGrid">
         <button>-</button>
-        <button>FWD</button>
+        <button onclick="setControl(6);">FWD</button>
         <button>-</button>
-        <button>LEFT</button>
-        <button>REV</button>
-        <button>RIGHT</button>
+        <button onclick="setControl(8);">LEFT</button>
+        <button onclick="setControl(7);">REV</button>
+        <button onclick="setControl(9);">RIGHT</button>
         <button>-</button>
         <button>-</button>
         <button>-</button>
@@ -79,19 +79,19 @@
 
         <div class="armGridSub1">
           <button>-</button>
-          <button style="background-color: lime;">UP</button>
+          <button style="background-color: lime;" onclick="setControl(10);">UP</button>
           <button>-</button>
-          <button style="background-color: red;">LEFT</button>
-          <button>GRAB</button>
-          <button style="background-color: red;">RIGHT</button>
+          <button style="background-color: red;" onclick="setControl(12);">LEFT</button>
+          <button onclick="setControl(16);">GRAB</button>
+          <button style="background-color: red;" onclick="setControl(13);">RIGHT</button>
           <button>-</button>
-          <button style="background-color: lime;">DOWN</button>
+          <button style="background-color: lime;" onclick="setControl(11);">DOWN</button>
           <button>-</button>
 
         </div>
         <div class="armGridSub2">
-          <button style="background-color: cyan;">FWD</button>
-          <button style="background-color:cyan;">REV</button>
+          <button style="background-color: cyan;" onclick="setControl(14);">FWD</button>
+          <button style="background-color:cyan;" onclick="setControl(15);">REV</button>
         </div>
       </div>
     </div>
@@ -109,4 +109,5 @@
 <!-- <script src="ros.js"></script> -->
      <script type="module" src="./sim.js"></script>
 
- <script src="general.js"></script>
+ <script src="general.js"></script>     
+ <script src="./controlsRos.js"></script>

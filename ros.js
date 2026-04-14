@@ -1,7 +1,7 @@
-import { setIMU } from "./globalVariables.js";
+import { setIMU} from "./globalVariables.js";
 var ros = null;
 var topicToDisplay = "";
-
+const channel = new BroadcastChannel('controls_channel');
 var lat = -1;
 var long = -1;
 var mouseLat = -1;
@@ -9,6 +9,27 @@ var mouseLong = -1;
 var waypointMessages = []
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+const controlStates = {
+    toggle1_: 0,
+    toggle2_: 0,
+    toggle3_: 0,
+    toggle4_: 0,
+    toggle5_: 0,
+    toggle6_: 0,
+    drivetrain_fwd_: 0,
+    drivetrain_left_: 0,
+    drivetrain_right_: 0,
+    drivetrain_rev_: 0,
+    arm_up_: 0,
+    arm_left_: 0,
+    arm_right_: 0,
+    arm_down_: 0,
+    arm_rev_: 0,
+    arm_grab_: 0,
+    arm_fwd_: 0
 }
 
 function connect() {
@@ -40,6 +61,38 @@ function publishWaypointList(){
         list_waypoints: waypointMessages
     });   
     topic.publish(msg);
+}
+
+async function publishControls(){
+    while (true){
+// console.log("publisher sees:", controlStates.toggle1_);
+        var topic = new ROSLIB.Topic({
+            ros: ros,
+            name: '/controls',
+            messageType: 'rover_interface/msg/UI'
+    });  
+    var msg = new ROSLIB.Message({
+        toggle1: controlStates.toggle1_, 
+        toggle2: controlStates.toggle2_,
+        toggle3: controlStates.toggle3_,
+        toggle4: controlStates.toggle4_,
+        toggle5: controlStates.toggle5_,
+        toggle6: controlStates.toggle6_,
+        drivetrain_fwd: controlStates.drivetrain_fwd_,
+        drivetrain_left: controlStates.drivetrain_left_,
+        drivetrain_right: controlStates.drivetrain_right_,
+        drivetrain_rev: controlStates.drivetrain_rev_,
+        arm_up: controlStates.arm_up_,
+        arm_down: controlStates.arm_down_,
+        arm_left: controlStates.arm_left_,
+        arm_right: controlStates.arm_right_,
+        arm_fwd: controlStates.arm_fwd_,
+        arm_rev: controlStates.arm_rev_,
+        arm_grab: controlStates.arm_grab_
+    });
+    topic.publish(msg);
+    await sleep(100);
+}
 }
 
 function publishWaypoint(name, color, latitude, longitude) {
@@ -496,6 +549,12 @@ function run() {
     initGPS();
     focusMap();
     testMovement();
+    publishControls();
+    channel.onmessage = (event) => {
+    // state.toggle1_ = event.data.toggle1_;
+    Object.assign(controlStates, event.data.state);
+    console.log('index.html sees:', event.data.state.toggle1_);
+};
 }
 run();
 // publish();
