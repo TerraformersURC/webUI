@@ -3,9 +3,11 @@ function sleep(ms) {
 }
 var ros;
 function connect() {
+    // url: 'ws://localhost:9090'
     ros = new ROSLIB.Ros({
-        url: 'ws://localhost:9090'
+        url: 'ws://192.168.1.4:9090'
     });
+
 
     ros.on('connection', function () {
         console.log('Connected to websocket server.');
