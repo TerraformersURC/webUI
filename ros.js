@@ -1,8 +1,8 @@
 // import { setIMU} from "./globalVariables.js";
 var ros = null;
 var topicToDisplay = "";
-var lat = -1;
-var long = -1;
+var lat = 38.968864098653256;
+var long = -76.95230122044846;
 var mouseLat = -1;
 var mouseLong = -1;
 var waypointMessages = []
@@ -428,41 +428,47 @@ function initGPS() {
         fillOpacity: 0.5,
         radius: 2
     });
-    map = L.map('map').setView([lat, long], 50);
+    map = L.map('map', { attributionControl: false }).setView([lat, long], 16); 
+    L.control.attribution({ prefix: false }).addTo(map); 
+    var tilesource_layer = L.tileLayer('./local_tiles_umd/{z}/{x}/{y}.png', { minZoom: 14, maxZoom: 18, tms: false, attribution: 'Created by QGIS' });
+    tilesource_layer.addTo(map);
+    circle.addTo(map);
+    circle.bringToFront();
+    // map = L.map('map').setView([lat, long], 50);
     map.on('click', function (e) {
         mouseLat = e.latlng.lat;
         mouseLong = e.latlng.lng;
         console.log(e.latlng.lat, e.latlng.lng);
         addWaypointName();
         // var waypoint = L.circle([mouseLat, mouseLong], {
-        //     color: 'blue',
-        //     fillColor: '#00f',
-        //     fillOpacity: 0.5,
-        //     radius: 2
-        // });
-
-        // waypoint.fillColor = "#000000";
-        // waypoint.color = "#000000";
-        // addWaypointName();
-        // waypoints.push(waypoint);
-        // waypoint.bindTooltip(waypointNames.at(waypoints.length-1), {
-        //     permanent: true,     // always visible
-        //     direction: "right",  // position relative to marker
-        //     offset: [10, 0]
-        // });
-        // waypoint.addTo(map);
-
-    });
+            //     color: 'blue',
+            //     fillColor: '#00f',
+            //     fillOpacity: 0.5,
+            //     radius: 2
+            // });
+            
+            // waypoint.fillColor = "#000000";
+            // waypoint.color = "#000000";
+            // addWaypointName();
+            // waypoints.push(waypoint);
+            // waypoint.bindTooltip(waypointNames.at(waypoints.length-1), {
+                //     permanent: true,     // always visible
+                //     direction: "right",  // position relative to marker
+                //     offset: [10, 0]
+                // });
+                // waypoint.addTo(map);
+                
+            });
     // L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     //     maxZoom: 50,
     //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     // }).addTo(map);
-    var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
 
-    })
-    Esri_WorldImagery.addTo(map);
-    circle.addTo(map);
+    // var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    //     attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+
+    // })
+    // Esri_WorldImagery.addTo(map);
 }
 
 async function focusMap() {
