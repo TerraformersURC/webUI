@@ -1,11 +1,15 @@
 // import { setIMU} from "./globalVariables.js";
 var ros = null;
+var localRos = null;
 var topicToDisplay = "";
 var lat = 38.968864098653256;
 var long = -76.95230122044846;
 var mouseLat = -1;
 var mouseLong = -1;
+var baseStationHeartbeat = 0;
 var waypointMessages = []
+var lastRoverHeartbeat = 0;
+var roverConnected = false;
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -15,6 +19,10 @@ function connect() {
     ros = new ROSLIB.Ros({
         url: 'ws://192.168.1.4:9090'
     });
+
+    localRos = new ROSLIB.Ros({
+        url: 'ws://localhost:9090'
+    })
 
     ros.on('connection', function () {
         console.log('Connected to websocket server.');
@@ -27,9 +35,74 @@ function connect() {
     ros.on('close', function () {
         console.log('Connection to websocket server closed.');
     });
+
+
+    localRos.on('connection', function () {
+        console.log('Connected to local server.');
+    });
+
+    localRos.on('error', function (error) {
+        console.log('Error connecting to local server: ', error);
+    });
+
+    localRos.on('close', function () {
+        console.log('Connection to websocket local closed.');
+    });
 }
 
-function publishWaypointList(){
+
+var baseStationStopSignalTopic;
+async function countRoverHeartbeat() {
+    baseStationStopSignalTopic = new ROSLIB.Topic({
+        ros: localRos,
+        name: '/base_station/stop_signal',
+        messageType: 'std_msgs/Bool'
+    });
+    while (true) {
+
+        var msg;
+        if (lastRoverHeartbeat >= 2000) {
+            msg = new ROSLIB.Message({
+                data: true
+            });
+            baseStationStopSignalTopic.publish(msg);
+            if (roverConnected) {
+                roverConnected = false;
+                window.alert("ERROR: Lost connection to rover!");
+            }
+            console.log("ERROR");
+        }
+        else {
+            msg = new ROSLIB.Message({
+                data: false
+            });
+            baseStationStopSignalTopic.publish(msg);
+
+            console.log("GOOD");
+        }
+        lastRoverHeartbeat += 100;
+        await sleep(100);
+    }
+}
+
+async function publishBasestationHeartbeat() {
+    while (true) {
+        var topic = new ROSLIB.Topic({
+            ros: ros,
+            name: '/base_station_heartbeat',
+            messageType: 'std_msgs/msg/String'
+        });
+        var messageContent = "Base Station: " + baseStationHeartbeat.toString();
+        var msg = new ROSLIB.Message({
+            data: messageContent
+        });
+        baseStationHeartbeat++;
+        topic.publish(msg);
+        await sleep(100);
+    }
+}
+
+function publishWaypointList() {
     var topic = new ROSLIB.Topic({
         ros: ros,
         name: '/waypoint_list',
@@ -38,7 +111,7 @@ function publishWaypointList(){
 
     var msg = new ROSLIB.Message({
         list_waypoints: waypointMessages
-    });   
+    });
     topic.publish(msg);
 }
 
@@ -71,6 +144,24 @@ async function subscribe() {
     //     ros: ros,
     //     name: '/webTopic',
     //     messageType: 'std_msgs/String'
+    // });
+
+    var roverHeartbeat = new ROSLIB.Topic({
+        ros: ros,
+        name: '/rover_heartbeat',
+        messageType: 'std_msgs/String'
+    });
+
+    var baseStationHeartbeat = new ROSLIB.Topic({
+        ros: ros,
+        name: '/base_station_heartbeat',
+        messageType: 'std_msgs/String'
+    });
+
+    // var imuAngleSub = new ROSLIB.Topic({
+    //     ros: ros,
+    //     name: '/IMUAngle',
+    //     messageType: 'rover_interface/msg/IMUData'
     // });
 
     var imuAngleSub = new ROSLIB.Topic({
@@ -109,7 +200,8 @@ async function subscribe() {
     // Create a topic object for the compressed image stream
     var image_topic = new ROSLIB.Topic({
         ros: ros,
-        name: '/robot/rgb_camera/image_raw', // Subscribe to the COMPRESSED topic
+        // name: '/robot/rgb_camera/image_raw', // Subscribe to the COMPRESSED topic
+        name: '/zed0/zed_node/rgb/color/rect/image',
         messageType: 'sensor_msgs/msg/Image'
     });
 
@@ -137,12 +229,12 @@ async function subscribe() {
     // });
 
     // Subscribe to the topic
-    image_topic.subscribe(function (message) {
-        // Update the image source with the Base64 data received from the message
-        // The 'data:image/jpeg;base64,' prefix is crucial for the browser to interpret the data URL correctly
-        console.log("IMAGE LOAD");
-        document.getElementById('my_image').src = "data:image/jpeg;base64," + message.data;
-    });
+    // image_topic.subscribe(function (message) {
+    //     // Update the image source with the Base64 data received from the message
+    //     // The 'data:image/jpeg;base64,' prefix is crucial for the browser to interpret the data URL correctly
+    //     console.log("IMAGE LOAD");
+    //     document.getElementById('my_image').src = "data:image/jpeg;base64," + message.data;
+    // });
     var logBox;
     imuAngleSub.subscribe(function (message) {
         // const imuChannel = new BroadcastChannel('imu');
@@ -155,6 +247,34 @@ async function subscribe() {
                 logBox.value = "";
             }
             logBox.value += (new Date()).toLocaleString() + ' Status: ' + message.status + ' X: ' + message.x + ' Y: ' + message.y + ' Z: ' + message.z + "\n";
+        }
+    });
+
+    roverHeartbeat.subscribe(function (message) {
+        if (!roverConnected) {
+            window.alert("SUCCESS: Rover connected!");
+
+        }
+        roverConnected = true;
+        lastRoverHeartbeat = 0;
+        if (topicToDisplay == "rover_heartbeat") {
+
+            logBox = document.getElementById('log');
+            if (logBox.value.length > 6500) {
+                logBox.value = "";
+            }
+            logBox.value += (new Date()).toLocaleString() + ' ' + message.data + "\n";
+        }
+    });
+
+    baseStationHeartbeat.subscribe(function (message) {
+        if (topicToDisplay == "base_station_heartbeat") {
+
+            logBox = document.getElementById('log');
+            if (logBox.value.length > 6500) {
+                logBox.value = "";
+            }
+            logBox.value += (new Date()).toLocaleString() + ' ' + message.data + "\n";
         }
     });
 
@@ -246,8 +366,8 @@ async function subscribe() {
                 logBox.value = "";
             }
             console.log("LENGTH LENGTH: " + message.list_waypoints.length)
-            for (var i = 0; i < message.list_waypoints.length; i++){
-                logBox.value += 'Waypoint ' + (i+1) + "\n";
+            for (var i = 0; i < message.list_waypoints.length; i++) {
+                logBox.value += 'Waypoint ' + (i + 1) + "\n";
                 logBox.value += (new Date()).toLocaleString() + ' Name: ' + message.list_waypoints[i].waypoint_name + ' Color: ' + message.list_waypoints[i].waypoint_color + ' Latitude: ' + message.list_waypoints[i].latitude + ' Longitude: ' + message.list_waypoints[i].longitude + '\n';
             }
             logBox.value += "\n";
@@ -275,7 +395,7 @@ function listTopics() {
         // console.log('Topics:', result.topics);
         for (let topic of result.topics) {
             topics += topic + ", ";
-            if (topic == "/GPSData" || topic == "/IMUAcceleration" || topic == "/IMUAngle" || topic == "/IMUGyro" || topic == "/IMUMagnet" || topic == "/IMUQuaternion" || topic == "/rosout" || topic == "/waypoints" || topic == "/waypoint_list") {
+            if (topic == "/GPSData" || topic == "/IMUAcceleration" || topic == "/IMUAngle" || topic == "/IMUGyro" || topic == "/IMUMagnet" || topic == "/IMUQuaternion" || topic == "/rosout" || topic == "/waypoints" || topic == "/waypoint_list" || topic == "/rover_heartbeat" || topic == "/base_station_heartbeat") {
 
                 const button = document.createElement("button");
                 button.onclick = () => topicClick(topic);
@@ -283,6 +403,14 @@ function listTopics() {
                 buttons.push(button);
                 document.getElementsByClassName("btns")[0].appendChild(button);
             }
+        }
+
+        if (!result.topics.includes("/rover_heartbeat")) {
+            console.log("ROVER HEARTBEAT LOST!!!!!");
+        }
+        else {
+            console.log("ROVER HEARTBEAT FOUND");
+
         }
 
         // for (topic of result.topics) {
@@ -373,6 +501,14 @@ function topicClick(topic) {
             console.log("BUTTON");
             topicDisplay.textContent = "Selected Topic: waypoint_list";
             break;
+        case "/base_station_heartbeat":
+            topicToDisplay = "base_station_heartbeat";
+            topicDisplay.textContent = "Selected Topic: base_station_heartbeat";
+            break;
+        case "/rover_heartbeat":
+            topicToDisplay = "rover_heartbeat";
+            topicDisplay.textContent = "Selected Topic: rover_heartbeat";
+            break;
     }
 }
 
@@ -408,7 +544,7 @@ function addName() {
     });
     waypoint.addTo(map);
     waypoints.push(waypoint);
-    publishWaypoint(waypointNames.at(waypointNames.length - 1), waypointColors.at(waypointNames.length-1), mouseLat, mouseLong);
+    publishWaypoint(waypointNames.at(waypointNames.length - 1), waypointColors.at(waypointNames.length - 1), mouseLat, mouseLong);
     waypoints.at(waypoints.length - 1).bindTooltip(waypointNames.at(waypoints.length - 1), {
         permanent: true,     // always visible
         direction: "right",  // position relative to marker
@@ -428,8 +564,8 @@ function initGPS() {
         fillOpacity: 0.5,
         radius: 2
     });
-    map = L.map('map', { attributionControl: false }).setView([lat, long], 16); 
-    L.control.attribution({ prefix: false }).addTo(map); 
+    map = L.map('map', { attributionControl: false }).setView([lat, long], 16);
+    L.control.attribution({ prefix: false }).addTo(map);
     var tilesource_layer = L.tileLayer('./local_tiles_umd/{z}/{x}/{y}.png', { minZoom: 14, maxZoom: 18, tms: false, attribution: 'Created by QGIS' });
     tilesource_layer.addTo(map);
     circle.addTo(map);
@@ -441,24 +577,24 @@ function initGPS() {
         console.log(e.latlng.lat, e.latlng.lng);
         addWaypointName();
         // var waypoint = L.circle([mouseLat, mouseLong], {
-            //     color: 'blue',
-            //     fillColor: '#00f',
-            //     fillOpacity: 0.5,
-            //     radius: 2
-            // });
-            
-            // waypoint.fillColor = "#000000";
-            // waypoint.color = "#000000";
-            // addWaypointName();
-            // waypoints.push(waypoint);
-            // waypoint.bindTooltip(waypointNames.at(waypoints.length-1), {
-                //     permanent: true,     // always visible
-                //     direction: "right",  // position relative to marker
-                //     offset: [10, 0]
-                // });
-                // waypoint.addTo(map);
-                
-            });
+        //     color: 'blue',
+        //     fillColor: '#00f',
+        //     fillOpacity: 0.5,
+        //     radius: 2
+        // });
+
+        // waypoint.fillColor = "#000000";
+        // waypoint.color = "#000000";
+        // addWaypointName();
+        // waypoints.push(waypoint);
+        // waypoint.bindTooltip(waypointNames.at(waypoints.length-1), {
+        //     permanent: true,     // always visible
+        //     direction: "right",  // position relative to marker
+        //     offset: [10, 0]
+        // });
+        // waypoint.addTo(map);
+
+    });
     // L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     //     maxZoom: 50,
     //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -495,9 +631,11 @@ async function testMovement() {
 function run() {
     connect();
     updateTopics();
+    publishBasestationHeartbeat();
     subscribe();
     initGPS();
     focusMap();
     testMovement();
+    countRoverHeartbeat();
 }
 run();
