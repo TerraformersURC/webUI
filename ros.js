@@ -2,8 +2,10 @@
 var ros = null;
 var localRos = null;
 var topicToDisplay = "";
-var lat = 38.968864098653256;
-var long = -76.95230122044846;
+var lat = 51.465254766478324;
+var long = -112.70757789911389;
+// UMD TEST COORDS: lat: 38.968864098653256, long: -76.95230122044846   
+// CIRC TEST COORDS: lat: 51.465254766478324, long: -112.70757789911389
 var mouseLat = -1;
 var mouseLong = -1;
 var baseStationHeartbeat = 0;
@@ -23,6 +25,7 @@ function connect() {
     localRos = new ROSLIB.Ros({
         url: 'ws://localhost:9090'
     })
+    ros = localRos; // TESTING ONLY
 
     ros.on('connection', function () {
         console.log('Connected to websocket server.');
@@ -566,7 +569,8 @@ function initGPS() {
     });
     map = L.map('map', { attributionControl: false }).setView([lat, long], 16);
     L.control.attribution({ prefix: false }).addTo(map);
-    var tilesource_layer = L.tileLayer('./local_tiles_umd/{z}/{x}/{y}.png', { minZoom: 14, maxZoom: 18, tms: false, attribution: 'Created by QGIS' });
+    // TILESOURCE FOR UMD var tilesource_layer = L.tileLayer('./local_tiles_umd/{z}/{x}/{y}.png', { minZoom: 14, maxZoom: 18, tms: false, attribution: 'Created by QGIS' });
+    var tilesource_layer = L.tileLayer('./local_tiles_circ/{z}/{x}/{y}.jpg', { minZoom: 10, maxZoom: 17, tms: false, attribution: 'Created by QGIS' });
     tilesource_layer.addTo(map);
     circle.addTo(map);
     circle.bringToFront();
@@ -634,7 +638,7 @@ function run() {
     publishBasestationHeartbeat();
     subscribe();
     initGPS();
-    focusMap();
+    // focusMap();
     testMovement();
     countRoverHeartbeat();
 }
