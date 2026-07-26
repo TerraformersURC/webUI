@@ -4,6 +4,7 @@ var localRos = null;
 var topicToDisplay = "";
 var lat = 51.465254766478324;
 var long = -112.70757789911389;
+var positions = [];
 // UMD TEST COORDS: lat: 38.968864098653256, long: -76.95230122044846   
 // CIRC TEST COORDS: lat: 51.465254766478324, long: -112.70757789911389
 var mouseLat = -1;
@@ -25,7 +26,7 @@ function connect() {
     localRos = new ROSLIB.Ros({
         url: 'ws://localhost:9090'
     })
-    ros = localRos; // TESTING ONLY
+    ros = localRos; // TESTING ONLY - COMMENT OUT LINE WHEN CONNECTING TO JETSON
 
     ros.on('connection', function () {
         console.log('Connected to websocket server.');
@@ -341,6 +342,7 @@ async function subscribe() {
         // const logBox = document.getElementById('log');
         lat = message.latitude;
         long = message.longitude;
+        positions.push([lat, long]);
         if (topicToDisplay == "GPSData") {
             logBox = document.getElementById('log');
             if (logBox.value.length > 6500) {
@@ -560,7 +562,11 @@ function addName() {
 document.getElementById("nameBtn").addEventListener("click", addName);
 // var lat = 38.9903971;
 // var long = -76.9378520;
+var trail; 
 function initGPS() {
+    trail = L.polyline([], {
+    color: "blue"
+});
     circle = L.circle([lat, long], {
         color: 'red',
         fillColor: '#f03',
@@ -573,6 +579,7 @@ function initGPS() {
     var tilesource_layer = L.tileLayer('./local_tiles_circ/{z}/{x}/{y}.jpg', { minZoom: 10, maxZoom: 17, tms: false, attribution: 'Created by QGIS' });
     tilesource_layer.addTo(map);
     circle.addTo(map);
+    trail.addTo(map);
     circle.bringToFront();
     // map = L.map('map').setView([lat, long], 50);
     map.on('click', function (e) {
@@ -611,9 +618,12 @@ function initGPS() {
     // Esri_WorldImagery.addTo(map);
 }
 
+
+
 async function focusMap() {
     while (true) {
         map.setView([lat, long]);
+        trail.setLatLngs(positions);
         await sleep(100);
     }
 }
@@ -622,6 +632,7 @@ async function testMovement() {
     while (true) {
         // lat += 0.00001;
         // long += 0.00001;
+        //  positions.push([lat, long]);
         // if (mouseLat != -1 || mouseLong != -1){
         //     waypoints.push
         // }
@@ -638,7 +649,7 @@ function run() {
     publishBasestationHeartbeat();
     subscribe();
     initGPS();
-    // focusMap();
+    focusMap();
     testMovement();
     countRoverHeartbeat();
 }
