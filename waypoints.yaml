@@ -1,0 +1,15 @@
+waypoints:
+  - waypoint_name: waypoint1
+    waypoint_color: "#F5B351"
+    waypoint_lat: 51.465254766478324
+    waypoint_long: -112.70385420918757
+
+  - waypoint_name: waypoint2
+    waypoint_color: "#F55192"
+    waypoint_lat: 51.466757004510335
+    waypoint_long: -112.7132333032451
+
+  - waypoint_name: waypoint3
+    waypoint_color: "#51E4F5"
+    waypoint_lat: 51.46405471134582
+    waypoint_long: -112.70977784753971

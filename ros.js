@@ -545,7 +545,7 @@ function addName() {
         color: waypointColors.at(waypointColors.length - 1),
         fillColor: waypointColors.at(waypointColors.length - 1),
         fillOpacity: 0.5,
-        radius: 2
+        radius: 4
     });
     waypoint.addTo(map);
     waypoints.push(waypoint);
@@ -651,6 +651,43 @@ function run() {
     initGPS();
     focusMap();
     testMovement();
+    loadWaypoints().catch(console.error);
     countRoverHeartbeat();
 }
 run();
+
+import { load } from "./js-yaml.js";
+
+async function loadWaypoints() {
+  const response = await fetch("./waypoints.yaml");
+
+  if (!response.ok) {
+    throw new Error(`Failed to load YAML: ${response.status}`);
+  }
+
+  const text = await response.text();
+  const doc = load(text);
+
+
+  for (const waypoint of doc.waypoints) {
+    console.log("1111111111111111111111");
+    waypointNames.push(waypoint.waypoint_name);
+    waypointColors.push(waypoint.waypoint_color);
+    var waypointMapItem= L.circle([waypoint.waypoint_lat, waypoint.waypoint_long], {
+        color: waypointColors.at(waypointColors.length - 1),
+        fillColor: waypointColors.at(waypointColors.length - 1),
+        fillOpacity: 0.5,
+        radius: 4
+    });
+    waypointMapItem.addTo(map);
+    waypoints.push(waypointMapItem);
+    publishWaypoint(waypointNames.at(waypointNames.length - 1), waypointColors.at(waypointNames.length - 1), waypoint.waypoint_lat, waypoint.waypoint_long);
+    waypoints.at(waypoints.length - 1).bindTooltip(waypointNames.at(waypoints.length - 1), {
+        permanent: true,     // always visible
+        direction: "right",  // position relative to marker
+        offset: [10, 0]
+    });
+    waypoints.at(waypoints.length - 1).addTo(map);
+  }
+  console.log(doc);
+}
