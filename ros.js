@@ -573,10 +573,10 @@ function initGPS() {
         fillOpacity: 0.5,
         radius: 2
     });
-    map = L.map('map', { attributionControl: false }).setView([lat, long], 16);
+    map = L.map('map', { attributionControl: false, minZoom: 10, maxZoom: 20 }).setView([lat, long], 16);
     L.control.attribution({ prefix: false }).addTo(map);
     // TILESOURCE FOR UMD var tilesource_layer = L.tileLayer('./local_tiles_umd/{z}/{x}/{y}.png', { minZoom: 14, maxZoom: 18, tms: false, attribution: 'Created by QGIS' });
-    var tilesource_layer = L.tileLayer('./local_tiles_circ/{z}/{x}/{y}.jpg', { minZoom: 10, maxZoom: 17, tms: false, attribution: 'Created by QGIS' });
+    var tilesource_layer = L.tileLayer('./local_tiles_circ_zoom20/{z}/{x}/{y}.jpg', { minZoom: 10, maxZoom: 20, maxNativeZoom: 18, zoomOffset: -1, tileSize: 512, tms: false, attribution: 'Created by QGIS' });
     tilesource_layer.addTo(map);
     circle.addTo(map);
     trail.addTo(map);
@@ -637,7 +637,7 @@ async function testMovement() {
         //     waypoints.push
         // }
         var newLatLng = L.latLng(lat, long);
-        // console.log("lat: " + lat + " long: " + long);
+        console.log("lat: " + lat + " long: " + long);
         circle.setLatLng(newLatLng);
         await sleep(100);
     }
