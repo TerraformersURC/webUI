@@ -7,6 +7,7 @@ var long = -112.70757789911389;
 var positions = [];
 // UMD TEST COORDS: lat: 38.968864098653256, long: -76.95230122044846   
 // CIRC TEST COORDS: lat: 51.465254766478324, long: -112.70757789911389
+// FL Test COORDS: lat: 27.96, long: -82.46
 var mouseLat = -1;
 var mouseLong = -1;
 var baseStationHeartbeat = 0;
@@ -563,6 +564,15 @@ document.getElementById("nameBtn").addEventListener("click", addName);
 // var lat = 38.9903971;
 // var long = -76.9378520;
 var trail; 
+var zoomMax;
+function updateZoomLevel() {
+    if (map.getZoom() > zoomMax){
+        document.getElementById("map-zoom").textContent = `Zoom: ${map.getZoom()} (Beyond Native)`;
+    }
+    else{
+        document.getElementById("map-zoom").textContent = `Zoom: ${map.getZoom()} (Native)`;
+    }
+}
 function initGPS() {
     trail = L.polyline([], {
     color: "blue"
@@ -573,11 +583,51 @@ function initGPS() {
         fillOpacity: 0.5,
         radius: 2
     });
-    map = L.map('map', { attributionControl: false, minZoom: 10, maxZoom: 20 }).setView([lat, long], 16);
+    map = L.map('map').setView([lat, long], 15);
     L.control.attribution({ prefix: false }).addTo(map);
     // TILESOURCE FOR UMD var tilesource_layer = L.tileLayer('./local_tiles_umd/{z}/{x}/{y}.png', { minZoom: 14, maxZoom: 18, tms: false, attribution: 'Created by QGIS' });
-    var tilesource_layer = L.tileLayer('./local_tiles_circ_zoom20/{z}/{x}/{y}.jpg', { minZoom: 10, maxZoom: 20, maxNativeZoom: 18, zoomOffset: -1, tileSize: 512, tms: false, attribution: 'Created by QGIS' });
-    tilesource_layer.addTo(map);
+    // var tilesource_layer = L.tileLayer('./offline_world_imagery/{z}/{x}/{y}.jpg', { minZoom: 10, maxZoom: 20, maxNativeZoom: 18, zoomOffset: -1, tileSize: 512, tms: false, attribution: 'Created by QGIS' });
+    // Add local offline tile layer matching your folder/zoomlevel/subfolder/img structure
+    // tilesource_layer.addTo(map);
+
+        // OPTION 1 FOR CIRC (COMMENT OUT OTHER OPTION)- My Recommendation, Higher Native Zoom (Slightly more blurry on all zooms), Large Area Coverage
+        zoomMax = 18;
+        L.tileLayer('./offline_world_imagery_circ/{z}/{x}/{y}.png', {
+            minZoom: 15,
+            maxNativeZoom: 18,
+            maxZoom: 30,
+            attribution: 'Esri World Imagery | Offline Cache',
+            tms: false // Standard XYZ tile scheme
+        }).addTo(map);
+        ////////////////////////////////////////////////////////////////
+
+        // OPTION 2 FOR CIRC (COMMENT OUT OTHER OPTION) - Lower Max Native Zoom (Slightly less blurry on all zooms), Smaller Area Coverage
+        // zoomMax = 17;
+        // L.tileLayer('./local_tiles_circ_zoom20/{z}/{x}/{y}.jpg', {
+        //     minZoom: 15,
+        //     maxNativeZoom: 17,
+        //     maxZoom: 30,
+        //     attribution: 'Esri World Imagery | Offline Cache',
+        //     tms: false // Standard XYZ tile scheme
+        // }).addTo(map);
+        ///////////////////////////////////////////////////////////////
+
+        // OPTION 3 FOR CIRC (COMMENT OUT OTHER OPTION) - What you had originally, Lower Max Native Zoom (Slightly less blurry on all zooms), Lowest Min Native Zoom, Largest Area Coverage
+        // zoomMax = 17;
+        // L.tileLayer('./local_tiles_circ/{z}/{x}/{y}.jpg', {
+        //     minZoom: 10,
+        //     maxNativeZoom: 17,
+        //     maxZoom: 30,
+        //     attribution: 'Esri World Imagery | Offline Cache',
+        //     tms: false // Standard XYZ tile scheme
+        // }).addTo(map);
+        //////////////////////////////////////////////////////////////
+
+    map.on('zoomend', updateZoomLevel);
+
+    // Set the initial zoom level
+    updateZoomLevel();
+
     circle.addTo(map);
     trail.addTo(map);
     circle.bringToFront();
