@@ -1,3 +1,20 @@
+/**
+ * @file leaflet.js
+ * Robotics @ Maryland - Terraformers Software
+ * 
+ * @description This is a downloaded copy of a needed file by leaflet to hande rendering the GPS map	
+ * 
+ * @author Vladimir Agafonkin (https://leafletjs.com owner)
+ * Sub-Team: User Interface
+ * Contact: Leo Abubucker (leokumar@outlook.com)
+ * 
+ * @link https://unpkg.com/leaflet@1.9.4/dist/leaflet.js
+ * 
+ * @version 1.9.4
+ * 
+ * @readonly THIS IS A DOWNLOADED COPY OF A 3RD PARTY PACKAGE - DO NOT EDIT
+ */
+
 /* @preserve
  * Leaflet 1.9.4, a JS library for interactive maps. https://leafletjs.com
  * (c) 2010-2023 Vladimir Agafonkin, (c) 2010-2011 CloudMade

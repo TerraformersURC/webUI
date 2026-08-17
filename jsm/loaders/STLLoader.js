@@ -1,3 +1,20 @@
+/**
+ * @file STLLoader.js
+ * Robotics @ Maryland - Terraformers Software
+ * 
+ * @description This is a downloaded copy of a needed file by three.js to render the 3D model of the rover	
+ * 
+ * @author mrdoob (three.js repository owner)
+ * Sub-Team: User Interface
+ * Contact: Leo Abubucker (leokumar@outlook.com)
+ * 
+ * @link https://cdn.jsdelivr.net/npm/three@0.183/examples/jsm/loaders/STLLoader.js
+ * 
+ * @version 0.183
+ * 
+ * @readonly THIS IS A DOWNLOADED COPY OF A 3RD PARTY PACKAGE - DO NOT EDIT
+ */
+
 import {
 	BufferAttribute,
 	BufferGeometry,

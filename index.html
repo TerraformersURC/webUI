@@ -1,27 +1,24 @@
+<!-- 
+ * @file index.html
+ * Robotics @ Maryland - Terraformers Software
+ * 
+ * @description This contains the HTML for the website's homepage
+ * 
+ * @author Leo Abubucker
+ * Sub-Team: User Interface
+ * Contact: Leo Abubucker (leokumar@outlook.com)
+ * 
+ * Last Modified: 08-17-2026 (MM-DD-YYYY)
+-->
 <!DOCTYPE html>
 <html>
 
 <head>
   <meta charset="utf-8" />
   <link rel="stylesheet" type="text/css" href="index.css">
-
-  <!-- roslib -->
-  <!-- <script type="text/javascript"
-    src="https://cdn.jsdelivr.net/npm/eventemitter2@6.4.9/lib/eventemitter2.min.js"></script>  -->
-    <script type="text/javascript" src="eventemitter2.min.js"></script>
     <script type="text/javascript" src="roslib.js"></script>
     <link rel="stylesheet" href="leaflet.css">
     <script src="leaflet.js"></script>
-    
-    <!-- Leaflet -->
-    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.js"></script> -->
-
-   <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" -->
-     <!-- integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/> -->
-      <!-- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script> -->
 </head>
 
 <body>
@@ -60,23 +57,13 @@
         
       </textarea>
     </div>
-    <!-- <div class="webTopicPub">
-      <p>Publish to /webTopic</p>
-      <textarea id="msg" class="textbox" placeholder="message text here"></textarea>
-      <button onclick="publish('/webTopic', 'std_msgs/String', new ROSLIB.Message({data: document.getElementById('msg').value}));">Publish</button>
-      <p> What You Published: </p>
-      <div class="publishedContent"></div>
-    </div> -->
     <div class="container2" style="color:ghostwhite">
       <div id="map" style="height: 45vh; width: 50vw;"></div>
       <p id="map-zoom"></p>
-      <!-- <img src="http://192.168.1.4:8080/stream?topic=/robot/rgb_camera/image_raw" alt="http://192.168.1.4:8080/stream?topic=/robot/rgb_camera/image_raw" style="height:40vh; width:50vw;"> -->
-      <img src="http://192.168.1.4:8080/stream?topic=/overlay/image" alt="http://192.168.1.4:8080/stream?topic=/overlay/image" style="height:40vh; width:50vw;">
-
+      <img src="http://192.168.1.4:8080/stream?topic=/overlay/image" alt="Camera Feed: http://192.168.1.4:8080/stream?topic=/overlay/image" style="height:40vh; width:50vw;">
     </div>
   </div>
 </body>
 
 </html>
-<script type="module" src="ros.js"></script>
-<script src="general.js"></script>
+<script type="module" src="index.js"></script>

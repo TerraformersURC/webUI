@@ -1,0 +1,58 @@
+/**
+ * @file helper.css
+ * Robotics @ Maryland - Terraformers Software
+ * 
+ * @description This contains CSS rules that are shared across both index.html and controls.html
+ * 
+ * @author Leo Abubucker
+ * Sub-Team: User Interface
+ * Contact: Leo Abubucker (leokumar@outlook.com)
+ * 
+ * Last Modified: 08-17-2026 (MM-DD-YYYY)
+ */
+
+body {
+    background: #0f172a;
+    font-family: monospace;
+    overflow: hidden;
+}
+
+.text {
+    color: ghostwhite;
+}
+
+.header {
+    width: 96vw;
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.headerText{
+    margin: 0 auto;
+}
+
+.battery{
+    position: absolute;
+    right:0;
+}
+
+.batteryBox{
+    display: flex;
+    height:5vh;
+    width: 10vw;
+    background-color: lime;
+    text-align: center;
+    justify-content: center;
+}
+
+.batteryBorder{
+    height:5vh;
+    width: 10vw;
+    border: 2px solid lightgray;
+}
+
+h3{
+    font-size: xx-large;
+}

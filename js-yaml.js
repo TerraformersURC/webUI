@@ -1,4 +1,21 @@
 /**
+ * @file js-yaml.js
+ * Robotics @ Maryland - Terraformers Software
+ * 
+ * @description This is a downloaded copy of a needed file by js-yaml to hande parsing waypoints.yaml	
+ * 
+ * @author Nodeca (js-yaml repository owner)
+ * Sub-Team: User Interface
+ * Contact: Leo Abubucker (leokumar@outlook.com)
+ * 
+ * @link https://cdn.jsdelivr.net/npm/js-yaml@4.3.1/+esm
+ * 
+ * @version 4.3.1
+ * 
+ * @readonly THIS IS A DOWNLOADED COPY OF A 3RD PARTY PACKAGE - DO NOT EDIT
+ */
+
+/**
  * Bundled by jsDelivr using Rollup v4.62.2 and esbuild v0.28.1.
  * Original file: /npm/js-yaml@4.3.1/dist/js-yaml.mjs
  *

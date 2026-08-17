@@ -1,3 +1,21 @@
+/**
+ * @file leaflet.css
+ * Robotics @ Maryland - Terraformers Software
+ * 
+ * @description This is a downloaded copy of a needed file by leaflet to hande rendering the GPS map	
+ * 
+ * @author Volodymyr Agafonkin (https://leafletjs.com owner)
+ * Sub-Team: User Interface
+ * Contact: Leo Abubucker (leokumar@outlook.com)
+ * 
+ * @link https://unpkg.com/leaflet@1.9.4/dist/leaflet.css
+ * 
+ * @version 1.9.4
+ * 
+ * @readonly THIS IS A DOWNLOADED COPY OF A 3RD PARTY PACKAGE - DO NOT EDIT
+ */
+
+
 /* required styles */
 
 .leaflet-pane,
