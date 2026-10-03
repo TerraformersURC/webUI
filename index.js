@@ -36,7 +36,7 @@ var IMUAccelerationTopic;
 var IMUGryroTopic;
 var IMUMagnetTopic;
 var rosoutTopic;
-var cameraTopic;
+//var cameraTopic;
 var GPSTopic;
 var waypointTopic;
 var waypointListTopic;
@@ -166,11 +166,11 @@ function initTopics() {
         messageType: 'rcl_interfaces/msg/Log'
     })
 
-    cameraTopic = new ROSLIB.Topic({
-        ros: ros,
-        name: '/zed0/zed_node/rgb/color/rect/image',
-        messageType: 'sensor_msgs/msg/Image'
-    });
+    // cameraTopic = new ROSLIB.Topic({
+    //     ros: ros,
+    //     name: '/zed0/zed_node/rgb/color/rect/image',
+    //     messageType: 'sensor_msgs/msg/Image'
+    // });
 
     GPSTopic = new ROSLIB.Topic({
         ros: ros,
@@ -194,7 +194,7 @@ function initTopics() {
         name: '/base_station/stop_signal',
         messageType: 'std_msgs/Bool'
     });
-    topicsToLog = [basestationHeartbeatTopic.name, roverHeartbeatTopic.name, IMUAngleTopic.name, IMUAccelerationTopic.name, IMUGryroTopic.name, IMUMagnetTopic.name, rosoutTopic.name, cameraTopic.name, GPSTopic.name, waypointTopic.name, waypointListTopic.name, basestationStopSignalTopic.name];
+    topicsToLog = [basestationHeartbeatTopic.name, roverHeartbeatTopic.name, IMUAngleTopic.name, IMUAccelerationTopic.name, IMUGryroTopic.name, IMUMagnetTopic.name, rosoutTopic.name, /* cameraTopic.name, */ GPSTopic.name, waypointTopic.name, waypointListTopic.name, basestationStopSignalTopic.name];
 }
 
 /**
