@@ -7,10 +7,11 @@
  * are untouched by this file.
  */
 
-const SIGNALING_URL = "ws://192.168.1.20:8081";
+// const SIGNALING_URL = "ws://192.168.1.20:8081";
 
 let signalingSocket = null;
 let peerConnection = null;
+import {SIGNALING_URL} from "./helper.js";
 
 function connectSignaling() {
     signalingSocket = new WebSocket(SIGNALING_URL);
