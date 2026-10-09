@@ -1,17 +1,15 @@
 /**
  * Connects to the ZED WebRTC signaling server on the Jetson and renders
  * the incoming video stream in the #camera-feed <video> element.
- *
- * Replaces the old web_video_server / MJPEG <img> approach. GPS, drive,
- * arm control, and all other roslib.js-based functionality in this UI
- * are untouched by this file.
- */
+*
+* Replaces the old web_video_server / MJPEG <img> approach. GPS, drive,
+* arm control, and all other roslib.js-based functionality in this UI
+* are untouched by this file.
+*/
 
-// const SIGNALING_URL = "ws://192.168.1.20:8081";
-
+import {SIGNALING_URL} from "./helper.js";
 let signalingSocket = null;
 let peerConnection = null;
-import {SIGNALING_URL} from "./helper.js";
 
 function connectSignaling() {
     signalingSocket = new WebSocket(SIGNALING_URL);

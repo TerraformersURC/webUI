@@ -17,7 +17,7 @@
  * 
  */
 
-export const ROVER_WEBSOCKET_URL = 'ws://localhost:9090'; // when rover ROS is running on jetson: ws://192.168.1.20:9090, when rover ROS is running locally: ws://localhost:9090
+export const ROVER_WEBSOCKET_URL = 'ws://192.168.1.20:9090'; // when rover ROS is running on jetson: ws://192.168.1.20:9090, when rover ROS is running locally: ws://localhost:9090
 export const BASESTATION_WEBSOCKET_URL = 'ws://localhost:9090'; // always: ws://localhost:9090
 export const SIGNALING_URL = "ws://192.168.1.20:8081";
 /**                                        
