@@ -17,9 +17,11 @@
  * 
  */
 
-export const ROVER_WEBSOCKET_URL = 'ws://192.168.1.20:9090'; // when rover ROS is running on jetson: ws://192.168.1.20:9090, when rover ROS is running locally: ws://localhost:9090
+export const ROVER_WEBSOCKET_URL = 'ws://localhost:9090'; // when rover ROS is running on jetson: ws://192.168.1.20:9090, when rover ROS is running locally: ws://localhost:9090
 export const BASESTATION_WEBSOCKET_URL = 'ws://localhost:9090'; // always: ws://localhost:9090
 export const SIGNALING_URL = "ws://192.168.1.20:8081";
+export var bgColor = "#0f172a";
+
 /**                                        
  * 
  * Section 1: Battery Display
@@ -79,5 +81,23 @@ export async function simBattery() {
  */
 export function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export async function toggleTheme(){
+    // while (1){
+        const currentTheme = document.documentElement.getAttribute("data-theme");
+        
+        if (currentTheme === "dark") {
+            document.documentElement.setAttribute("data-theme", "light");
+            document.getElementById("theme-toggle").textContent = "LIGHT MODE";
+            bgColor = "#f8f8ff";
+            
+        } else {
+            document.documentElement.setAttribute("data-theme", "dark");
+            document.getElementById("theme-toggle").textContent = "DARK MODE";
+            bgColor = "#0f172a"
+        }
+    //     await sleep(10);
+    // }
 }
 

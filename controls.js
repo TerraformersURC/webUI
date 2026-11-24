@@ -12,12 +12,13 @@
  */
 
 // import shared functions and constants
-import { updateBattery, simBattery, sleep, ROVER_WEBSOCKET_URL, BASESTATION_WEBSOCKET_URL } from "./helper.js";
+import { updateBattery, simBattery, sleep, ROVER_WEBSOCKET_URL, BASESTATION_WEBSOCKET_URL, toggleTheme, bgColor} from "./helper.js";
 
 // imports for 3D model rendering
 import * as THREE from 'three';
 import { STLLoader } from 'three/addons/loaders/STLLoader.js';
 
+window.toggleTheme = toggleTheme;
 /**                                        
  * 
  * Section 0: Global Variable Declarations
@@ -236,6 +237,21 @@ function initIMUSubscription() {
 }
 
 /**
+ * @description creates a subscription to /IMUAngle to update the 3D model in real-time
+ */
+function initBatterySubscription() {
+    var batterySub = new ROSLIB.Topic({
+        ros: ros,
+        name: '/battery_topic',
+        messageType: 'rover_interface/msg/Battery'
+    });
+    batterySub.subscribe(function (message) {
+        updateBattery(message.battery);
+    });
+}
+
+
+/**
  * 
  * Section 2: 3D Rendering and Animation
  * 
@@ -270,7 +286,7 @@ function animate() {
  * @description initialize the scene and renderer, start the animation loop
  */
 function initSim() {
-    scene.background = new THREE.Color("#0f172a");
+    scene.background = new THREE.Color(bgColor);
     renderer.setSize(parent.clientWidth, parent.clientHeight);
     parent.appendChild(renderer.domElement);
     camera.position.z = 7;
@@ -280,6 +296,10 @@ function initSim() {
     renderer.setAnimationLoop(animate);
 }
 
+function updateSimBackground(){
+    scene.background = new THREE.Color(bgColor);
+}
+window.updateSimBackground = updateSimBackground;
 /**
  * 
  * Section 3: Main Execution
@@ -292,7 +312,7 @@ function initSim() {
 function run() {
     initROSConnection(); // synchronous function
     publishControls(); // asynchronous function
-    simBattery(); // TESTING ONLY - asynchronous function
+    // simBattery(); // TESTING ONLY - asynchronous function
     initIMUSubscription(); // synchronous function
     initSim(); // synchronous function
 }

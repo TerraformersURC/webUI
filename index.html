@@ -18,12 +18,26 @@
   <link rel="stylesheet" type="text/css" href="index.css">
     <script type="text/javascript" src="roslib.js"></script>
     <link rel="stylesheet" href="leaflet.css">
+    <script src="./html2canvas.js"></script>
     <script src="leaflet.js"></script>
 </head>
 
-<body>
+<body id="body">
   <div class="header">
+      <div class="left">
+
         <a href="./controls.html" target="_blank" class="text" style="font-size: xx-large;">Controls</a>
+        <br>
+        <button id="theme-toggle" onclick="toggleTheme();">DARK MODE</button>
+        <button id="map-lock" onclick="toggleLock();">MAP LOCKED</button>
+        <button id="map-fullscreen" onclick="toggleFullscreen();">MAP FULLSCREEN</button>
+        <button id="screenshot-body" onclick="screenshotElt('body');">Screenshot Body</button>
+        <button id="screenshot-map" onclick="screenshotElt('map-container');">Screenshot Map</button>
+        <button id="screenshot-camera" onclick="screenshotElt('camera-feed');">Screenshot Camera</button>
+        <button id="screenshot-camera" onclick="screenshotElt('map-camera');">Screenshot Map/Camera</button>
+
+
+      </div>
 
     <h1 class="text headerText">Terraformers Web UI</h1>
     <div class="battery">
@@ -48,7 +62,7 @@
       </div>
       <button id="nameBtn"> submit</button>
     </div>
-    <div class="logs">
+    <!-- <div class="logs">
       <div class="btns">
         
       </div>
@@ -56,14 +70,18 @@
       <textarea id="log"  readonly class="logbox">
         
       </textarea>
-    </div>
-    <div class="container2" style="color:ghostwhite">
-      <div id="map" style="height: 45vh; width: 50vw;"></div>
-      <p id="map-zoom"></p>
+    </div> -->
+    <div class="container2" id="map-camera" style="color:ghostwhite">
+            <video id="camera-feed" autoplay muted playsinline style="height:40vh; width:50vw; border: 3px solid red;"></video>
+
+      <div id="map-container">
+
+        <div id="map" style="height:90%; width: 100%;"></div>
+        <p id="map-zoom" class="text"></p>
+      </div>
       <!-- 
       <img src="http://192.168.1.4:8080/stream?topic=/overlay/image" alt="Camera Feed: http://192.168.1.4:8080/stream?topic=/overlay/image" style="height:40vh; width:50vw;">
       -->
-      <video id="camera-feed" autoplay muted playsinline style="height:40vh; width:50vw; border: 3px solid red;"></video>
       <script type="module" src="webrtc-client.js?v=3"></script>
     </div>
   </div>

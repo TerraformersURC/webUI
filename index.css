@@ -24,7 +24,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: gray;
+    background-color: var(--bg-color);
 }
 
 .textbox {
@@ -53,7 +53,7 @@
     width:95%;
     height:90%;
     background-color: transparent;
-    color:ghostwhite;
+    color: var(--text-color);
 }
 
 .container{
@@ -64,6 +64,7 @@
 .container2{
     display: flex;
     flex-direction: column;
+    background-color: var(--bg-color);
 }
 
 
@@ -81,3 +82,22 @@
     display: flex;
     flex-direction: column;
 }
+
+#map-lock{
+    /* height:  */
+    width: 6vw;
+}
+
+#map-container{
+    position: relative;
+    height: 50vh; 
+    width: 50vw;
+    background-color: var(--bg-color);
+}
+
+.map-fullscreen{
+    position: absolute !important;
+    height: 95vh !important; 
+    width: 100vw !important;
+}
+

@@ -13,11 +13,11 @@
 
 // import to load waypoints.yaml
 import { load } from "./js-yaml.js";
-
 // import shared functions and constants
-import { updateBattery, simBattery, sleep, ROVER_WEBSOCKET_URL, BASESTATION_WEBSOCKET_URL } from "./helper.js";
+import { updateBattery, simBattery, sleep, ROVER_WEBSOCKET_URL, BASESTATION_WEBSOCKET_URL, toggleTheme} from "./helper.js";
 
-/**                                        
+window.toggleTheme = toggleTheme
+/**                                       
  * 
  * Section 0: Global Variable Declarations
  * 
@@ -41,7 +41,8 @@ var GPSTopic;
 var waypointTopic;
 var waypointListTopic;
 var basestationStopSignalTopic;
-
+var batteryTopic;
+var mapIsLocked = true;
 // Topic Logging
 var topicToLog = null; // current topic to show in log box
 var topicsToLog = []; // list of topics that can be showed in log box
@@ -57,8 +58,11 @@ var roverConnected = false;
 
 // UMD TEST COORDS: lat: 38.968864098653256, long: -76.95230122044846   
 // CIRC TEST COORDS: lat: 51.465254766478324, long: -112.70757789911389
-var lat = 51.465254766478324;
-var long = -112.70757789911389;
+
+// var lat = 38.968864098653256; //umd
+// var long = -76.95230122044846; // umd
+var lat = 51.465254766478324; // circ
+var long = -112.70757789911389; // circ
 var positions = []; // stores all rover positions to render its trail
 var mouseLat = -1; // lat of last mouse click on map
 var mouseLong = -1; // long of last mouse click on map
@@ -189,12 +193,18 @@ function initTopics() {
         messageType: 'rover_interface/msg/WaypointList'
     })
 
+    batteryTopic = new ROSLIB.Topic({
+        ros: ros,
+        name: '/battery_topic',
+        messageType: 'rover_interface/msg/Battery'
+    })
+
     basestationStopSignalTopic = new ROSLIB.Topic({
         ros: localRos,
         name: '/base_station/stop_signal',
         messageType: 'std_msgs/Bool'
     });
-    topicsToLog = [basestationHeartbeatTopic.name, roverHeartbeatTopic.name, IMUAngleTopic.name, IMUAccelerationTopic.name, IMUGryroTopic.name, IMUMagnetTopic.name, rosoutTopic.name, /* cameraTopic.name, */ GPSTopic.name, waypointTopic.name, waypointListTopic.name, basestationStopSignalTopic.name];
+    topicsToLog = [basestationHeartbeatTopic.name, roverHeartbeatTopic.name, IMUAngleTopic.name, IMUAccelerationTopic.name, IMUGryroTopic.name, IMUMagnetTopic.name, rosoutTopic.name, /* cameraTopic.name, */ GPSTopic.name, waypointTopic.name, waypointListTopic.name, basestationStopSignalTopic.name, batteryTopic.name];
 }
 
 /**
@@ -269,6 +279,13 @@ function initRoverTopicSubscriptions() {
                 messageToLog += 'Waypoint ' + (i + 1) + "\n" + 'Name: ' + message.list_waypoints[i].waypoint_name + ' Color: ' + message.list_waypoints[i].waypoint_color + ' Latitude: ' + message.list_waypoints[i].latitude + ' Longitude: ' + message.list_waypoints[i].longitude + '\n';
             }
             logMessage(messageToLog);
+        }
+    });
+
+    batteryTopic.subscribe(function (message) {
+        updateBattery(message.battery);
+        if (topicToLog == batteryTopic.name) {
+            logMessage('Battery: ' + message.battery);
         }
     });
 }
@@ -528,11 +545,33 @@ async function updateMap() {
     while (true) {
         var newLatLng = L.latLng(lat, long);
         circle.setLatLng(newLatLng);
-        map.setView([lat, long]); // Comment out to disable auto-focusing
+        if(mapIsLocked){
+            map.setView([lat, long]);
+        }
         trail.setLatLngs(positions);
         await sleep(100);
     }
 }
+
+function toggleLock(){
+    var mapLock = document.getElementById("map-lock");
+
+    if(mapIsLocked){
+        mapLock.textContent = "MAP UNLOCKED";
+    }
+    else{
+        mapLock.textContent = "MAP LOCKED";
+    }
+    mapIsLocked = !mapIsLocked;
+}
+window.toggleLock = toggleLock;
+
+
+function toggleFullscreen(){
+    document.getElementById("map-container").classList.toggle("map-fullscreen");
+}
+window.toggleFullscreen = toggleFullscreen;
+
 
 /**
  * @description loads and parses waypoints.yaml, creating, adding to map, and publishing the waypoint information inside
@@ -568,7 +607,7 @@ function addWaypoint(name, color, lat, long) {
         color: color,
         fillColor: color,
         fillOpacity: 0.5,
-        radius: 4
+        radius: 2
     });
     waypointMapItem.addTo(map);
 
@@ -576,7 +615,6 @@ function addWaypoint(name, color, lat, long) {
     waypointMapItem.bindTooltip(name, {
         permanent: true,     // always visible
         direction: "right",  // position relative to marker
-        offset: [10, 0]
     });
 
     // publish the waypoint
@@ -621,6 +659,19 @@ function publishWaypoint(name, color, latitude, longitude) {
     publishWaypointList();
     waypointTopic.publish(msg);
 }
+
+async function screenshotElt(id){
+const canvas = await window.html2canvas(document.getElementById(id));
+
+const image = canvas.toDataURL("image/png");
+
+const link = document.createElement("a");
+link.href = image;
+link.download = `${id}.png`;
+link.click();
+
+}
+window.screenshotElt = screenshotElt;
 
 /**
  * 

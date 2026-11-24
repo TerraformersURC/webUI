@@ -21,7 +21,7 @@
     width: 25vw;
 }
 
-button {
+.drivetrainGrid button, .armGrid button, .toggleGrid button {
     font-size: xx-large;
 }
 
@@ -68,7 +68,7 @@ button {
 .aruco {
     height: 50vh;
     width: 45vw;
-    background-color: black;
+    background-color: var(--bg-color);
     display:flex;
     align-items: center;
     justify-content: center;
